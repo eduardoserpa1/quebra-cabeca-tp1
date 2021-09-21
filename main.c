@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h> // Para usar strings
 #include <time.h>
+#include <conio.h>
 
 
 #ifdef WIN32
@@ -18,6 +19,8 @@
 // SOIL é a biblioteca para leitura das imagens
 #include "SOIL.h"
 
+
+typedef unsigned char uch;
 // Um pixel RGB (24 bits)
 typedef struct
 {
@@ -133,20 +136,75 @@ int main(int argc, char *argv[])
     // ...
     //
     // Exemplo de manipulação: inverte as cores na imagem de saída
+
+
+
+
+
+
+
+
+
+
+
+
+
+    RGB magenta;
+    magenta.r = 0xff;
+    magenta.g = 0x00;
+    magenta.b = 0xff;
+    RGB black;
+    black.r = 0;
+    black.g = 0;
+    black.b = 0;
+    RGB yellow;
+    yellow.r = 255;
+    yellow.g = 255;
+    yellow.b = 0;
+
+    int r;
+    int used[500000];
+    int iterator = 0;
     
-
-
-    
-
 	for(int i=0; i<tam; i++) {
+    
+        RGB *pixel_desejado = &pic[DESEJ].img[i];
+        RGB *pixel_saida = &pic[SAIDA].img[i];
+        RGB *pixel_origem = &pic[ORIGEM].img[i];
         
-        //pic[SAIDA].img[i].r = 0;
-        //pic[SAIDA].img[i].g = 0;
-        //pic[SAIDA].img[i].b = 0;
+        *pixel_saida = *pixel_desejado;
+
+        for(int j=0; j<1000; j++) {
+            int r = rand() % tam;
+            pixel_origem = &pic[ORIGEM].img[r];
+            uch prox_r = pixel_origem->r - pixel_desejado->r;
+            uch prox_g = pixel_origem->g - pixel_desejado->g;
+            uch prox_b = pixel_origem->b - pixel_desejado->b;
+            if(prox_r < 0) prox_r *= -1;
+            if(prox_g < 0) prox_g *= -1;
+            if(prox_b < 0) prox_b *= -1;
+
+            if(prox_r < 50 && prox_g < 50 && prox_b < 50){
+                pixel_saida->r = pixel_origem->r;
+                pixel_saida->g = pixel_origem->g;
+                pixel_saida->b = pixel_origem->b;
+            }
+
+        }
 
     }
     
     
+
+
+
+
+
+
+
+
+
+
 
 
 
