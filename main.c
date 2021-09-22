@@ -38,6 +38,8 @@ typedef struct
 void load(char *name, Img *pic);
 void valida();
 int cmp(const void *elem1, const void *elem2);
+//
+void compara(RGB *proximidade,RGB *pixel_desej, RGB *pixel_saida);
 
 // Funções da interface gráfica e OpenGL
 void init();
@@ -127,86 +129,76 @@ int main(int argc, char *argv[])
     int tam = pic[ORIGEM].width * pic[ORIGEM].height;
     memcpy(pic[SAIDA].img, pic[ORIGEM].img, sizeof(RGB) * tam);
 
-    //
-    // Neste ponto, voce deve implementar o algoritmo!
-    // (ou chamar funcoes para fazer isso)
-    //
-    // Aplica o algoritmo e gera a saida em pic[SAIDA].img...
-    // ...
-    // ...
-    //
-    // Exemplo de manipulação: inverte as cores na imagem de saída
-
-
-
-
-
-
-
-
-
-
-
-
-
-    RGB magenta;
-    magenta.r = 0xff;
-    magenta.g = 0x00;
-    magenta.b = 0xff;
-    RGB black;
-    black.r = 0;
-    black.g = 0;
-    black.b = 0;
-    RGB yellow;
-    yellow.r = 255;
-    yellow.g = 255;
-    yellow.b = 0;
-
-    int r;
-    int used[500000];
-    int iterator = 0;
+    // ~
     
-	for(int i=0; i<tam; i++) {
-    
+    for(int i=0; i<tam; i++){
         RGB *pixel_desejado = &pic[DESEJ].img[i];
         RGB *pixel_saida = &pic[SAIDA].img[i];
         RGB *pixel_origem = &pic[ORIGEM].img[i];
         
-        *pixel_saida = *pixel_desejado;
+        // desenha a imagem desejada na saída
+        *pixel_saida = *pixel_origem;
+    }
 
-        for(int j=0; j<1000; j++) {
-            int r = rand() % tam;
-            pixel_origem = &pic[ORIGEM].img[r];
-            uch prox_r = pixel_origem->r - pixel_desejado->r;
-            uch prox_g = pixel_origem->g - pixel_desejado->g;
-            uch prox_b = pixel_origem->b - pixel_desejado->b;
-            if(prox_r < 0) prox_r *= -1;
-            if(prox_g < 0) prox_g *= -1;
-            if(prox_b < 0) prox_b *= -1;
+    int maior = 0;
+    int count = 0;
 
-            if(prox_r < 50 && prox_g < 50 && prox_b < 50){
-                pixel_saida->r = pixel_origem->r;
-                pixel_saida->g = pixel_origem->g;
-                pixel_saida->b = pixel_origem->b;
-            }
+    for(int i=0; i<10000000; i++){
 
+        long r1;// = rand() % tam;
+        int r2;// = rand() % tam;
+
+        r1 = rand() % tam;
+        r2 = rand() % tam;
+        //corrigir rand() para gerar números pseudoaleatorios maiores que 32767.
+
+        //printf("r1:%d | r2:%d\n",r1,r2);
+        if(r1 > maior) maior = r1;
+        if(r1 == r2) continue;
+
+        RGB *p1_saida = &pic[SAIDA].img[r1];
+        RGB *p2_saida = &pic[SAIDA].img[r2];
+
+        RGB *p1_desej = &pic[DESEJ].img[r1];
+        RGB *p2_desej = &pic[DESEJ].img[r2];
+
+        RGB p1_proximidade_antes;
+        RGB p2_proximidade_antes;
+        RGB p1_proximidade_depois;
+        RGB p2_proximidade_depois;
+
+        //printf("{proximidade_pixel_r_1=%u | proximidade_pixel_g_1=%u | proximidade_pixel_b_1=%u}\n",p1_proximidade_antes.r,p1_proximidade_antes.g,p1_proximidade_antes.b);
+
+        compara(&p1_proximidade_antes,p1_desej,p1_saida);
+        compara(&p2_proximidade_antes,p2_desej,p2_saida);
+
+        compara(&p1_proximidade_depois,p2_desej,p1_saida);
+        compara(&p2_proximidade_depois,p1_desej,p2_saida);
+
+        //printf("p1{r=%u | g=%u | b=%u}\n",p1_proximidade_antes.r,p1_proximidade_antes.g,p1_proximidade_antes.b);
+        //printf("p2{r=%u | g=%u | b=%u}\n\n",p2_proximidade_antes.r,p2_proximidade_antes.g,p2_proximidade_antes.b);
+        //printf("p1{r=%u | g=%u | b=%u}\n",p1_proximidade_depois.r,p1_proximidade_depois.g,p1_proximidade_depois.b);
+        //printf("p2{r=%u | g=%u | b=%u}\n",p2_proximidade_depois.r,p2_proximidade_depois.g,p2_proximidade_depois.b);   
+
+        if(p1_proximidade_depois.r < p1_proximidade_antes.r &&
+           p1_proximidade_depois.g < p1_proximidade_antes.g &&
+           p1_proximidade_depois.b < p1_proximidade_antes.b
+          ){
+              count++;
+              RGB aux;
+              aux = pic[SAIDA].img[r1];
+              pic[SAIDA].img[r1] = pic[SAIDA].img[r2];
+              pic[SAIDA].img[r2] = aux;
         }
 
     }
+    printf("count:%d | maior:%d\n",count,maior);
+    printf("rand(): %d\n",rand() << rand());
+    printf("[tam=%d]\n",tam);
+
     
-    
 
-
-
-
-
-
-
-
-
-
-
-
+    // ~
 
     // NÃO ALTERAR A PARTIR DAQUI!
 
@@ -217,6 +209,16 @@ int main(int argc, char *argv[])
 
     // Entra no loop de eventos, não retorna
     glutMainLoop();
+}
+
+void compara(RGB *proximidade,RGB *pixel_desej, RGB *pixel_saida){
+    proximidade->r = pixel_saida->r - pixel_desej->r;
+    proximidade->g = pixel_saida->g - pixel_desej->g;
+    proximidade->b = pixel_saida->b - pixel_desej->b;
+
+    if(proximidade->r < 0) proximidade->r *= -1;
+    if(proximidade->g < 0) proximidade->g *= -1;
+    if(proximidade->b < 0) proximidade->b *= -1;
 }
 
 // Carrega uma imagem para a struct Img
