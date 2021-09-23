@@ -148,9 +148,9 @@ int main(int argc, char *argv[])
         long r1;// = rand() % tam;
         int r2;// = rand() % tam;
 
-        r1 = rand() % tam;
-        r2 = rand() % tam;
-        //corrigir rand() para gerar números pseudoaleatorios maiores que 32767.
+        r1 = (rand() << 15 | rand()) % tam;
+        r2 = (rand() << 15 | rand()) % tam;
+        
 
         //printf("r1:%d | r2:%d\n",r1,r2);
         if(r1 > maior) maior = r1;
@@ -180,9 +180,11 @@ int main(int argc, char *argv[])
         //printf("p1{r=%u | g=%u | b=%u}\n",p1_proximidade_depois.r,p1_proximidade_depois.g,p1_proximidade_depois.b);
         //printf("p2{r=%u | g=%u | b=%u}\n",p2_proximidade_depois.r,p2_proximidade_depois.g,p2_proximidade_depois.b);   
 
-        if(p1_proximidade_depois.r < p1_proximidade_antes.r &&
-           p1_proximidade_depois.g < p1_proximidade_antes.g &&
-           p1_proximidade_depois.b < p1_proximidade_antes.b
+
+        //refinar a condição de proximidade
+        if(p1_proximidade_depois.r <= p1_proximidade_antes.r &&
+           p1_proximidade_depois.g <= p1_proximidade_antes.g &&
+           p1_proximidade_depois.b <= p1_proximidade_antes.b
           ){
               count++;
               RGB aux;
