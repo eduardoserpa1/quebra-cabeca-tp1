@@ -144,16 +144,17 @@ int main(int argc, char *argv[])
     int maior = 0;
     int count = 0;
 
-    for(int i=0; i<80000000; i++){
-
+    //for(long i=0; i<1000000000; i++){
+    while(count < 10*tam){
         long r1;
-        int r2;
+        long r2;
 
         r1 = genrand64_int64() % tam;
         r2 = genrand64_int64() % tam;
-
+        
         //printf("r1:%d | r2:%d\n",r1,r2);
-        if(r1 > maior) maior = r1;
+        //if(r1 > maior) maior = r1;
+        
         if(r1 == r2) continue;
 
         RGB *p1_saida = &pic[SAIDA].img[r1];
@@ -167,35 +168,26 @@ int main(int argc, char *argv[])
         RGB p1_proximidade_depois;
         RGB p2_proximidade_depois;
 
-        //printf("{proximidade_pixel_r_1=%u | proximidade_pixel_g_1=%u | proximidade_pixel_b_1=%u}\n",p1_proximidade_antes.r,p1_proximidade_antes.g,p1_proximidade_antes.b);
-
         compara(&p1_proximidade_antes,p1_desej,p1_saida);
         compara(&p2_proximidade_antes,p2_desej,p2_saida);
 
         compara(&p1_proximidade_depois,p2_desej,p1_saida);
         compara(&p2_proximidade_depois,p1_desej,p2_saida);
 
-        //printf("p1{r=%u | g=%u | b=%u}\n",p1_proximidade_antes.r,p1_proximidade_antes.g,p1_proximidade_antes.b);
-        //printf("p2{r=%u | g=%u | b=%u}\n\n",p2_proximidade_antes.r,p2_proximidade_antes.g,p2_proximidade_antes.b);
-        //printf("p1{r=%u | g=%u | b=%u}\n",p1_proximidade_depois.r,p1_proximidade_depois.g,p1_proximidade_depois.b);
-        //printf("p2{r=%u | g=%u | b=%u}\n",p2_proximidade_depois.r,p2_proximidade_depois.g,p2_proximidade_depois.b);   
-
-
-        //refinar a condição de proximidade
-        if(p1_proximidade_depois.r < p1_proximidade_antes.r &&
-           p1_proximidade_depois.g < p1_proximidade_antes.g &&
-           p1_proximidade_depois.b < p1_proximidade_antes.b
+        if(
+            (p1_proximidade_depois.r <= p1_proximidade_antes.r && p1_proximidade_depois.g <= p1_proximidade_antes.g && p1_proximidade_depois.b <= p1_proximidade_antes.b)
           ){
-              count++;
-              RGB aux;
-              aux = pic[SAIDA].img[r1];
-              pic[SAIDA].img[r1] = pic[SAIDA].img[r2];
-              pic[SAIDA].img[r2] = aux;
+            count++;
+            RGB aux;
+            aux = pic[SAIDA].img[r1];
+            pic[SAIDA].img[r1] = pic[SAIDA].img[r2];
+            pic[SAIDA].img[r2] = aux;
         }
+        
 
     }
     printf("count:%d | maior:%d\n",count,maior);
-    printf("rand(): %d\n",rand() << rand());
+    //printf("rand(): %d\n",rand() << rand());
     printf("[tam=%d]\n",tam);
 
     
@@ -214,13 +206,19 @@ int main(int argc, char *argv[])
 }
 
 void compara(RGB *proximidade,RGB *pixel_desej, RGB *pixel_saida){
-    proximidade->r = pixel_saida->r - pixel_desej->r;
-    proximidade->g = pixel_saida->g - pixel_desej->g;
-    proximidade->b = pixel_saida->b - pixel_desej->b;
+    int r,g,b;
 
-    if(proximidade->r < 0) proximidade->r *= -1;
-    if(proximidade->g < 0) proximidade->g *= -1;
-    if(proximidade->b < 0) proximidade->b *= -1;
+    r = pixel_saida->r - pixel_desej->r;
+    g = pixel_saida->g - pixel_desej->g;
+    b = pixel_saida->b - pixel_desej->b;
+
+    if(r < 0) r *= -1;
+    if(g < 0) g *= -1;
+    if(b < 0) b *= -1;
+
+    proximidade->r = r;
+    proximidade->g = g;
+    proximidade->b = b;
 }
 
 // Carrega uma imagem para a struct Img
