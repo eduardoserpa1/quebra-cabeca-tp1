@@ -3,6 +3,7 @@
 #include <string.h> // Para usar strings
 #include <time.h>
 #include <conio.h>
+#include "hiroshima.c"
 
 
 #ifdef WIN32
@@ -143,14 +144,13 @@ int main(int argc, char *argv[])
     int maior = 0;
     int count = 0;
 
-    for(int i=0; i<10000000; i++){
+    for(int i=0; i<80000000; i++){
 
-        long r1;// = rand() % tam;
-        int r2;// = rand() % tam;
+        long r1;
+        int r2;
 
-        r1 = (rand() << 15 | rand()) % tam;
-        r2 = (rand() << 15 | rand()) % tam;
-        
+        r1 = genrand64_int64() % tam;
+        r2 = genrand64_int64() % tam;
 
         //printf("r1:%d | r2:%d\n",r1,r2);
         if(r1 > maior) maior = r1;
@@ -182,9 +182,9 @@ int main(int argc, char *argv[])
 
 
         //refinar a condição de proximidade
-        if(p1_proximidade_depois.r <= p1_proximidade_antes.r &&
-           p1_proximidade_depois.g <= p1_proximidade_antes.g &&
-           p1_proximidade_depois.b <= p1_proximidade_antes.b
+        if(p1_proximidade_depois.r < p1_proximidade_antes.r &&
+           p1_proximidade_depois.g < p1_proximidade_antes.g &&
+           p1_proximidade_depois.b < p1_proximidade_antes.b
           ){
               count++;
               RGB aux;
