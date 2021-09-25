@@ -140,20 +140,15 @@ int main(int argc, char *argv[])
         // desenha a imagem desejada na saída
         *pixel_saida = *pixel_origem;
     }
-
-    int maior = 0;
+    
     int count = 0;
 
-    //for(long i=0; i<1000000000; i++){
     while(count < 10*tam){
         long r1;
         long r2;
 
         r1 = genrand64_int64() % tam;
         r2 = genrand64_int64() % tam;
-        
-        //printf("r1:%d | r2:%d\n",r1,r2);
-        //if(r1 > maior) maior = r1;
         
         if(r1 == r2) continue;
 
@@ -186,11 +181,7 @@ int main(int argc, char *argv[])
         
 
     }
-    printf("count:%d | maior:%d\n",count,maior);
-    //printf("rand(): %d\n",rand() << rand());
-    printf("[tam=%d]\n",tam);
-
-    
+ 
 
     // ~
 
